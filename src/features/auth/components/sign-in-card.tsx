@@ -9,23 +9,25 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import Link from 'next/link';
+import { loginSchema } from '../schemas';
+import { useLogin } from '../api/use-login';
 
-const formSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(1, "Required"),
-});
+
 
 export const SignInCard = () => {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const { mutate } = useLogin();
+
+
+  const form = useForm<z.infer<typeof loginSchema>>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       email: '',
       password: '',
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+  const onSubmit = (values: z.infer<typeof loginSchema>) => {
+    mutate({ json: values });
   }
   return (
     <Card className="w-full h-full md:w-[487px] border-none shadow-none">
@@ -107,8 +109,8 @@ export const SignInCard = () => {
         <p>
           Don&apos;t have an account?{' '}
           <Link href={"/sign-up"}>
-              <span>
-                <a className="text-blue-700">Sign Up</a>
+              <span className="text-blue-700">
+                Sign Up
               </span>
           </Link>
         </p>      
